@@ -379,16 +379,16 @@ struct OpCode {
     }
 
     const Info& GetInfo() const {
-        #define unknown_instruction { OpCode::Type::Unknown, 0, "UNK" }
+        static const OpCode::Info unknown = { OpCode::Type::Unknown, 0, "UNK" };
         static const OpCode::Info info_table[] =  {
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "add" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "dp3" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "dp4" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "dph" },
-            { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "dst" },
+            unknown,
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "exp" },
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "log" },
-            { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "lit" },
+            unknown,
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "mul" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "sge" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "slt" },
@@ -397,23 +397,23 @@ struct OpCode {
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "min" },
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "rcp" },
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "rsq" },
-            unknown_instruction,
-            unknown_instruction,
+            unknown,
+            unknown,
             { OpCode::Type::Arithmetic, OpCode::Info::MOVA, "mova" },
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "mov" },
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
+            unknown,
+            unknown,
+            unknown,
+            unknown,
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "dphi" },
-            { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "dsti" },
+            unknown,
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "sgei" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "slti" },
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
-            { OpCode::Type::Trivial, 0, "break" },
+            unknown,
+            unknown,
+            unknown,
+            unknown,
+            unknown,
             { OpCode::Type::Trivial, 0, "nop" },
             { OpCode::Type::Trivial, 0, "end" },
             { OpCode::Type::Conditional, OpCode::Info::BREAKC, "breakc" },
@@ -446,7 +446,6 @@ struct OpCode {
             { OpCode::Type::MultiplyAdd, 0, "mad" },
             { OpCode::Type::MultiplyAdd, 0, "mad" }
         };
-        #undef unknown_instruction
         return info_table[value];
     }
 
