@@ -196,7 +196,7 @@ union OutputRegisterInfo {
             { QUATERNION, "out.quat" },
             { COLOR,      "out.col"  },
             { TEXCOORD0,  "out.tex0" },
-            { TEXCOORD0W, "out.tex0w"},
+            { TEXCOORD0W, "out.texw"},
             { TEXCOORD1,  "out.tex1" },
             { TEXCOORD2,  "out.tex2" },
             { VIEW,       "out.view" }
