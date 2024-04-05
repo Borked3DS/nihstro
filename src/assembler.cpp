@@ -32,6 +32,7 @@
 
 #include <stack>
 
+#include <boost/core/invoke_swap.hpp>
 #include <boost/program_options.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 #include <boost/range/adaptor/sliced.hpp>
@@ -726,7 +727,7 @@ int main(int argc, char* argv[])
                             case OpCode::Id::MAX:
                             case OpCode::Id::MIN:
                                 // Commutative operation, so just exchange arguments
-                                boost::swap(arguments[1], arguments[2]);
+                                boost::core::invoke_swap(arguments[1], arguments[2]);
                                 break;
 
                             case OpCode::Id::DPH:
@@ -839,7 +840,7 @@ int main(int argc, char* argv[])
                         // This can be done because MAD is commutative in its first two arguments.
                         // NOTE: This is only necessary for MADI because MAD provides 7 bits for SRC1 *and* SRC2.
                         if (arguments[2].IsExtended())
-                            boost::swap(arguments[1], arguments[2]);
+                            boost::core::invoke_swap(arguments[1], arguments[2]);
                     }
 
                     shinst.mad.src1 = SourceRegister::FromTypeAndIndex(arguments[1].GetType(), arguments[1].GetIndex());
@@ -929,7 +930,7 @@ int main(int argc, char* argv[])
                 shinst.common.compare_op.x = InvertCompareMode(compare_instruction.GetOp1());
                 shinst.common.compare_op.y = InvertCompareMode(compare_instruction.GetOp2());
 
-                boost::swap(src1, src2);
+                boost::core::invoke_swap(src1, src2);
             } else {
                 shinst.common.compare_op.x = compare_instruction.GetOp1();
                 shinst.common.compare_op.y = compare_instruction.GetOp2();
