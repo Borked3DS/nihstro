@@ -673,6 +673,19 @@ union SwizzlePattern {
         w = 3
     };
 
+    /**
+     * Gets the raw 8-bit selector for the specified (1-indexed) source register.
+     */
+    unsigned GetRawSelector(unsigned src) const {
+        if (src == 0 || src > 3)
+            throw std::out_of_range("src needs to be between 1 and 3");
+
+        unsigned selectors[] = {
+            src1_selector, src2_selector, src3_selector
+        };
+        return selectors[src - 1];
+    }
+
     Selector GetSelectorSrc1(int comp) const {
         Selector selectors[] = {
             src1_selector_0, src1_selector_1, src1_selector_2, src1_selector_3
