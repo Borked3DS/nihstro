@@ -379,7 +379,7 @@ struct OpCode {
     }
 
     const Info& GetInfo() const {
-        #define unknown_instruction { OpCode::Type::Unknown, 0, "UNK" }
+        static const OpCode::Info unknown = { OpCode::Type::Unknown, 0, "UNK" };
         static const OpCode::Info info_table[] =  {
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "add" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "dp3" },
@@ -397,22 +397,22 @@ struct OpCode {
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments, "min" },
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "rcp" },
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "rsq" },
-            unknown_instruction,
-            unknown_instruction,
+            unknown,
+            unknown,
             { OpCode::Type::Arithmetic, OpCode::Info::MOVA, "mova" },
             { OpCode::Type::Arithmetic, OpCode::Info::OneArgument, "mov" },
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
+            unknown,
+            unknown,
+            unknown,
+            unknown,
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "dphi" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "dsti" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "sgei" },
             { OpCode::Type::Arithmetic, OpCode::Info::TwoArguments | OpCode::Info::SrcInversed, "slti" },
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
-            unknown_instruction,
+            unknown,
+            unknown,
+            unknown,
+            unknown,
             { OpCode::Type::Trivial, 0, "break" },
             { OpCode::Type::Trivial, 0, "nop" },
             { OpCode::Type::Trivial, 0, "end" },
@@ -446,7 +446,6 @@ struct OpCode {
             { OpCode::Type::MultiplyAdd, 0, "mad" },
             { OpCode::Type::MultiplyAdd, 0, "mad" }
         };
-        #undef unknown_instruction
         return info_table[value];
     }
 
@@ -747,16 +746,11 @@ union SwizzlePattern {
             throw std::out_of_range("comp needs to be smaller than 4");
     }
 
-    std::string SelectorToString(bool src2) const {
-        std::map<Selector, std::string> map = {
-            { Selector::x, "x" },
-            { Selector::y, "y" },
-            { Selector::z, "z" },
-            { Selector::w, "w" }
-        };
+    std::string SelectorToString(int src) const {
         std::string ret;
         for (int i = 0; i < 4; ++i) {
-            ret += map.at(src2 ? GetSelectorSrc2(i) : GetSelectorSrc1(i));
+            auto comp = (src == 0) ? GetSelectorSrc1(i) : (src == 1) ? GetSelectorSrc2(i) : GetSelectorSrc3(i);
+            ret += "xyzw"[static_cast<uint32_t>(comp)];
         }
         return ret;
     }
