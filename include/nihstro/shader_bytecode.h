@@ -779,21 +779,18 @@ union SwizzlePattern {
     BitField< 0, 4, uint32_t> dest_mask;
 
     BitFlag < 4,    uint32_t> negate_src1;
-    BitField< 5, 8, uint32_t> src1_selector;
     BitField< 5, 2, Selector> src1_selector_3;
     BitField< 7, 2, Selector> src1_selector_2;
     BitField< 9, 2, Selector> src1_selector_1;
     BitField<11, 2, Selector> src1_selector_0;
 
     BitFlag <13,    uint32_t> negate_src2;
-    BitField<14, 8, uint32_t> src2_selector;
     BitField<14, 2, Selector> src2_selector_3;
     BitField<16, 2, Selector> src2_selector_2;
     BitField<18, 2, Selector> src2_selector_1;
     BitField<20, 2, Selector> src2_selector_0;
 
     BitFlag <22,    uint32_t> negate_src3;
-    BitField<23, 8, uint32_t> src3_selector;
     BitField<23, 2, Selector> src3_selector_3;
     BitField<25, 2, Selector> src3_selector_2;
     BitField<27, 2, Selector> src3_selector_1;
