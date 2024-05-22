@@ -33,10 +33,15 @@
 #include <stack>
 
 #include <boost/core/invoke_swap.hpp>
+#include <boost/version.hpp>
 #include <boost/program_options.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 #include <boost/range/adaptor/sliced.hpp>
 #include <boost/range/algorithm/count_if.hpp>
+
+#if BOOST_VERSION >= 108400
+#include <boost/core/invoke_swap.hpp>
+#endif
 
 #include "nihstro/parser_assembly.h"
 #include "nihstro/preprocessor.h"
@@ -727,7 +732,11 @@ int main(int argc, char* argv[])
                             case OpCode::Id::MAX:
                             case OpCode::Id::MIN:
                                 // Commutative operation, so just exchange arguments
+#if BOOST_VERSION >= 108400
                                 boost::core::invoke_swap(arguments[1], arguments[2]);
+#else
+                                boost::swap(arguments[1], arguments[2]);
+#endif
                                 break;
 
                             case OpCode::Id::DPH:
@@ -840,7 +849,11 @@ int main(int argc, char* argv[])
                         // This can be done because MAD is commutative in its first two arguments.
                         // NOTE: This is only necessary for MADI because MAD provides 7 bits for SRC1 *and* SRC2.
                         if (arguments[2].IsExtended())
+#if BOOST_VERSION >= 108400
                             boost::core::invoke_swap(arguments[1], arguments[2]);
+#else
+                            boost::swap(arguments[1], arguments[2]);
+#endif
                     }
 
                     shinst.mad.src1 = SourceRegister::FromTypeAndIndex(arguments[1].GetType(), arguments[1].GetIndex());
@@ -930,7 +943,11 @@ int main(int argc, char* argv[])
                 shinst.common.compare_op.x = InvertCompareMode(compare_instruction.GetOp1());
                 shinst.common.compare_op.y = InvertCompareMode(compare_instruction.GetOp2());
 
+#if BOOST_VERSION >= 108400
                 boost::core::invoke_swap(src1, src2);
+#else
+                boost::swap(src1, src2);
+#endif
             } else {
                 shinst.common.compare_op.x = compare_instruction.GetOp1();
                 shinst.common.compare_op.y = compare_instruction.GetOp2();
