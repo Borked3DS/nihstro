@@ -4,7 +4,7 @@ project(nihstro)
 
 find_package(Boost COMPONENTS program_options unit_test_framework)
 
-add_definitions(-std=c++11)
+add_definitions(-std=c++23)
 
 include_directories(include)
 
