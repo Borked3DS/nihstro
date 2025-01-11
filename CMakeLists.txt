@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.9)
 
+if(COMMAND CMAKE_POLICY)
+    # FindBoost module no longer provided in cmake 3.30 and above
+    if(POLICY CMP0167)
+        cmake_policy(SET CMP0167 OLD)
+        set(CMAKE_POLICY_DEFAULT_CMP0167 OLD)
+    endif()
+endif()
+
 project(nihstro)
 
 find_package(Boost COMPONENTS program_options unit_test_framework)
