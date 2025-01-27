@@ -1,4 +1,5 @@
 // Copyright 2014 Tony Wasserka
+// Copyright 2025 Borked3DS Emulator Project
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -116,6 +117,20 @@ template<std::size_t position, std::size_t bits, typename T>
 struct BitField
 {
 private:
+    // StorageType is T for non-enum types and the underlying type of T if
+    // T is an enumeration. Note that T is wrapped within an enable_if in the
+    // former case to workaround compile errors which arise when using
+    // std::underlying_type<T>::type directly.
+    typedef typename std::conditional < std::is_enum<T>::value,
+        std::underlying_type<T>,
+        std::enable_if < true, T >> ::type::type StorageType;
+
+    // Unsigned version of StorageType
+    typedef typename std::make_unsigned<StorageType>::type StorageTypeU;
+
+    // Storage member - initialized after type definitions
+    StorageType storage{};
+
     // This constructor might be considered ambiguous:
     // Would it initialize the storage or just the bitfield?
     // Hence, delete it. Use the assignment operator to set bitfield values!
@@ -173,28 +188,15 @@ public:
         }
     }
 
-	static size_t NumBits() {
-		return bits;
-	}
+    static size_t NumBits() {
+        return bits;
+    }
 
 private:
-    // StorageType is T for non-enum types and the underlying type of T if
-    // T is an enumeration. Note that T is wrapped within an enable_if in the
-    // former case to workaround compile errors which arise when using
-    // std::underlying_type<T>::type directly.
-    typedef typename std::conditional < std::is_enum<T>::value,
-        std::underlying_type<T>,
-        std::enable_if < true, T >> ::type::type StorageType;
-
-    // Unsigned version of StorageType
-    typedef typename std::make_unsigned<StorageType>::type StorageTypeU;
-
     __forceinline StorageType GetMask() const
     {
         return ((~(StorageTypeU)0) >> (8 * sizeof(T)-bits)) << position;
     }
-
-    StorageType storage;
 
     static_assert(bits + position <= 8 * sizeof(T), "Bitfield out of range");
 

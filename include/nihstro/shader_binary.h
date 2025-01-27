@@ -113,17 +113,15 @@ struct SwizzleInfo {
 };
 
 struct ConstantInfo {
-    enum Type : uint32_t {
-        Bool  = 0,
-        Int   = 1,
+    enum class Type : uint32_t {
+        Bool = 0,
+        Int = 1,
         Float = 2
     };
 
     union {
         uint32_t full_first_word;
-
         BitField<0, 2, Type> type;
-
         BitField<16, 8, uint32_t> regid;
     };
 
@@ -147,6 +145,14 @@ struct ConstantInfo {
             uint32_t w;
         } f;
     };
+
+    // Ensure proper initialization
+    ConstantInfo() : full_first_word(0) {
+        value_hex[0] = 0;
+        value_hex[1] = 0;
+        value_hex[2] = 0;
+        value_hex[3] = 0;
+    }
 };
 
 struct LabelInfo {

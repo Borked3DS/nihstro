@@ -1,4 +1,5 @@
 // Copyright 2014 Tony Wasserka
+// Copyright 2025 Borked3DS Emulator Project
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -147,7 +148,7 @@ struct SourceRegister {
     }
 
 private:
-    uint32_t value;
+    uint32_t value{};
 };
 
 struct DestRegister {
@@ -225,7 +226,7 @@ struct DestRegister {
     }
 
 private:
-    uint32_t value;
+    uint32_t value{};
 };
 
 struct OpCode {
@@ -360,15 +361,11 @@ struct OpCode {
         }
     };
 
-    OpCode() = default;
+    OpCode() : value(0) {};
 
-    OpCode(Id value) {
-        this->value = static_cast<uint32_t>(value);
-    }
+    OpCode(Id value) : value(static_cast<uint32_t>(value)) {} 
 
-    OpCode(uint32_t value) {
-        this->value = value;
-    }
+    OpCode(uint32_t value) : value(value) {} 
 
     Id EffectiveOpCode() const {
         uint32_t op = static_cast<uint32_t>(value);
@@ -475,7 +472,7 @@ struct OpCode {
     }
 
 private:
-    uint32_t value;
+    uint32_t value{};
 };
 
 } // namespace nihstro
@@ -501,12 +498,15 @@ namespace nihstro {
 
 #pragma pack(1)
 union Instruction {
+    Instruction() : hex(0) {}
+    Instruction(uint32_t hex_value) : hex(hex_value) {}
+
     Instruction& operator =(const Instruction& instr) {
         hex = instr.hex;
         return *this;
     }
 
-    uint32_t hex;
+    uint32_t hex{};
 
     BitField<0x1a, 0x6, OpCode> opcode;
 
@@ -663,12 +663,15 @@ static_assert(sizeof(Instruction) == 0x4, "Incorrect structure size");
 static_assert(std::is_standard_layout<Instruction>::value, "Structure does not have standard layout");
 
 union SwizzlePattern {
+    SwizzlePattern() : hex(0) {}
+    SwizzlePattern(uint32_t hex_value) : hex(hex_value) {}
+
     SwizzlePattern& operator =(const SwizzlePattern& instr) {
         hex = instr.hex;
         return *this;
     }
 
-    uint32_t hex;
+    uint32_t hex{};
 
     enum class Selector : uint32_t {
         x = 0,
