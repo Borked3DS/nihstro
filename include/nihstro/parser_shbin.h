@@ -118,14 +118,14 @@ struct ShaderInfo {
                 // i.e. there is a "gap" at the temporary registers, for which no
                 // name can be assigned (?).
                 int off = (source.GetRegisterType() == RegisterType::Input) ? 0 : 0x10;
-                if (source - off >= uniform_info.basic.reg_start &&
-                    source - off <= uniform_info.basic.reg_end) {
+                if (source - off >= uniform_info.basic.regs.reg_start.Value() &&
+                    source - off <= uniform_info.basic.regs.reg_end.Value()) {
                     std::string name = uniform_info.name;
 
                     std::string index;
-                    bool is_array = uniform_info.basic.reg_end != uniform_info.basic.reg_start;
+                    bool is_array = uniform_info.basic.regs.reg_end.Value() != uniform_info.basic.regs.reg_start.Value();
                     if (is_array) {
-                        index += std::to_string(source - off - uniform_info.basic.reg_start);
+                        index += std::to_string(source - off - uniform_info.basic.regs.reg_start.Value());
                     }
                     if (addr_reg_index != 0) {
                         index += (is_array) ? " + " : "";

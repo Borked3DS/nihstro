@@ -163,7 +163,7 @@ struct LabelInfo {
 };
 
 union OutputRegisterInfo {
-    enum Type : uint64_t {
+    enum class Type : uint64_t {
         POSITION   = 0,
         QUATERNION = 1,
         COLOR      = 2,
@@ -171,17 +171,18 @@ union OutputRegisterInfo {
         TEXCOORD0W = 4,
         TEXCOORD1  = 5,
         TEXCOORD2  = 6,
-
         VIEW       = 8,
     };
 
-    OutputRegisterInfo& operator =(const OutputRegisterInfo& oth) {
-        hex.Assign(oth.hex);
-        return *this;
+    OutputRegisterInfo() { 
+        hex.Assign(0);
+        type.Assign(Type::POSITION);
+        id.Assign(0);
+        component_mask.Assign(0);
+        descriptor.Assign(0);
     }
-
+    
     BitField< 0, 64, uint64_t> hex;
-
     BitField< 0, 16, Type> type;
     BitField<16, 16, uint64_t> id;
     BitField<32,  4, uint64_t> component_mask;
@@ -189,25 +190,25 @@ union OutputRegisterInfo {
 
     const std::string GetMask() const {
         std::string ret;
-        if (component_mask & 1) ret += "x";
-        if (component_mask & 2) ret += "y";
-        if (component_mask & 4) ret += "z";
-        if (component_mask & 8) ret += "w";
+        if (component_mask.Value() & 1) ret += "x";
+        if (component_mask.Value() & 2) ret += "y";
+        if (component_mask.Value() & 4) ret += "z";
+        if (component_mask.Value() & 8) ret += "w";
         return ret;
     }
 
     const std::string GetSemanticName() const {
         static const std::map<Type, std::string> map = {
-            { POSITION,   "out.pos"  },
-            { QUATERNION, "out.quat" },
-            { COLOR,      "out.col"  },
-            { TEXCOORD0,  "out.tex0" },
-            { TEXCOORD0W, "out.texw"},
-            { TEXCOORD1,  "out.tex1" },
-            { TEXCOORD2,  "out.tex2" },
-            { VIEW,       "out.view" }
+            { Type::POSITION,   "out.pos"  },
+            { Type::QUATERNION, "out.quat" },
+            { Type::COLOR,      "out.col"  },
+            { Type::TEXCOORD0,  "out.tex0" },
+            { Type::TEXCOORD0W, "out.texw" },
+            { Type::TEXCOORD1,  "out.tex1" },
+            { Type::TEXCOORD2,  "out.tex2" },
+            { Type::VIEW,       "out.view" }
         };
-        auto it = map.find(type);
+        auto it = map.find(type.Value());
         if (it != map.end())
             return it->second;
         else
@@ -216,7 +217,7 @@ union OutputRegisterInfo {
 };
 
 struct UniformInfo {
-    struct {
+    struct Basic {
         static RegisterType GetType(uint32_t reg) {
             if (reg < 0x10) return RegisterType::Input;
             else if (reg < 0x70) return RegisterType::FloatUniform;
@@ -235,29 +236,40 @@ struct UniformInfo {
             }
         }
 
+        uint32_t symbol_offset{0};
+        struct RegisterFields {
+            BitField< 0, 16, uint32_t> reg_start;
+            BitField<16, 16, uint32_t> reg_end;
+        } regs{};
+
         RegisterType GetStartType() const {
-            return GetType(reg_start);
+            return GetType(regs.reg_start.Value());
         }
 
         RegisterType GetEndType() const {
-            return GetType(reg_end);
+            return GetType(regs.reg_end.Value());
         }
 
         int GetStartIndex() const {
-            return GetIndex(reg_start);
+            return GetIndex(regs.reg_start.Value());
         }
 
         int GetEndIndex() const {
-            return GetIndex(reg_end);
+            return GetIndex(regs.reg_end.Value());
         }
 
-        uint32_t symbol_offset;
-        union {
-            BitField< 0, 16, uint32_t> reg_start;
-            BitField<16, 16, uint32_t> reg_end; // inclusive
-        };
+        void Initialize() {
+            symbol_offset = 0;
+            regs.reg_start.Assign(0);
+            regs.reg_end.Assign(0);
+        }
     } basic;
+
     std::string name;
+
+    UniformInfo() {
+        basic.Initialize();
+    }
 };
 
 #pragma pack()

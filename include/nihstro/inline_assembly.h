@@ -316,7 +316,7 @@ struct InlineAsm {
         ret.value[1] = y;
         ret.value[2] = z;
         ret.value[3] = w;
-        ret.constant_type = ConstantInfo::Float;
+        ret.constant_type = ConstantInfo::Type::Float;
         ret.reg_id = reg.GetIndex();
         return ret;
     }
@@ -423,7 +423,7 @@ struct InlineAsm {
                 constant.regid = command.reg_id;
 
                 switch (command.constant_type) {
-                case ConstantInfo::Float:
+                case ConstantInfo::Type::Float:
                     constant.f.x = to_float24(command.value[0]);
                     constant.f.y = to_float24(command.value[1]);
                     constant.f.z = to_float24(command.value[2]);
@@ -441,8 +441,8 @@ struct InlineAsm {
             {
                 UniformInfo uniform;
                 uniform.basic.symbol_offset = binary.symbol_table.size();
-                uniform.basic.reg_start = command.reg_id + 16; // TODO: Hardcoded against float uniforms
-                uniform.basic.reg_end = command.reg_id_last + 16;
+                uniform.basic.regs.reg_start.Assign(command.reg_id + 16); // TODO: Hardcoded against float uniforms
+                uniform.basic.regs.reg_end.Assign(command.reg_id_last + 16);
                 binary.uniform_table.push_back(uniform);
 
                 std::copy(command.name.begin(), command.name.end(), std::back_inserter(binary.symbol_table));
@@ -450,7 +450,6 @@ struct InlineAsm {
 
                 break;
             }
-
             case EndLoop:
                 break;
 
@@ -557,7 +556,12 @@ struct InlineAsm {
         unsigned uniform_table_offset = constant_table_offset + bin.constant_table.size() * sizeof(ConstantInfo);
         uint64_t* uniform_table_ptr = (uint64_t*)&ret.data()[uniform_table_offset];
         for (const auto& uniform : bin.uniform_table) {
-            *uniform_table_ptr = reinterpret_cast<const uint64_t&>(uniform.basic);
+            // Pack the values into the expected format for serialization
+            uint64_t packed_data = 0;
+            packed_data |= (uint64_t)uniform.basic.symbol_offset;
+            packed_data |= ((uint64_t)uniform.basic.regs.reg_start.Value()) << 32;
+            packed_data |= ((uint64_t)uniform.basic.regs.reg_end.Value()) << 48;
+            *uniform_table_ptr = packed_data;
             uniform_table_ptr++;
         }
         dvle->uniform_table_offset = uniform_table_offset - dvle_offset;
