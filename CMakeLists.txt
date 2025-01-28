@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 
 if(COMMAND CMAKE_POLICY)
     # FindBoost module no longer provided in cmake 3.30 and above
