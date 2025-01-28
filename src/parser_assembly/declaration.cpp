@@ -85,13 +85,13 @@ DeclarationParser<ParserIterator>::DeclarationParser(const ParserContext& contex
                   diagnostics(common.diagnostics) {
 
         // Setup symbol table
-        output_semantics.add("position", OutputRegisterInfo::POSITION);
-        output_semantics.add("quaternion", OutputRegisterInfo::QUATERNION);
-        output_semantics.add("color", OutputRegisterInfo::COLOR);
-        output_semantics.add("texcoord0", OutputRegisterInfo::TEXCOORD0);
-        output_semantics.add("texcoord1", OutputRegisterInfo::TEXCOORD1);
-        output_semantics.add("texcoord2", OutputRegisterInfo::TEXCOORD2);
-        output_semantics.add("view", OutputRegisterInfo::VIEW);
+        output_semantics.add("position", OutputRegisterInfo::Type::POSITION);
+        output_semantics.add("quaternion", OutputRegisterInfo::Type::QUATERNION);
+        output_semantics.add("color", OutputRegisterInfo::Type::COLOR);
+        output_semantics.add("texcoord0", OutputRegisterInfo::Type::TEXCOORD0);
+        output_semantics.add("texcoord1", OutputRegisterInfo::Type::TEXCOORD1);
+        output_semantics.add("texcoord2", OutputRegisterInfo::Type::TEXCOORD2);
+        output_semantics.add("view", OutputRegisterInfo::Type::VIEW);
         output_semantics_rule = qi::lexeme[output_semantics];
 
         // Setup rules

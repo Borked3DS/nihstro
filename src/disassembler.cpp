@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
             auto& info = parser.shader_info.constant_table[i];
 
             switch (info.type) {
-            case ConstantInfo::Float:
+            case ConstantInfo::Type::Float:
                 std::cout << "Constant register info:  " << GetRegisterName(RegisterType::FloatUniform) << info.regid.Value()
                           << " = (" << float24::FromRawFloat24(info.f.x).ToFloat32() << ", " << float24::FromRawFloat24(info.f.y).ToFloat32()
                           << ", " << float24::FromRawFloat24(info.f.z).ToFloat32() << ", " << float24::FromRawFloat24(info.f.w).ToFloat32() << ")"
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
                           << std::endl;
                 break;
 
-            case ConstantInfo::Int:
+            case ConstantInfo::Type::Int:
                 std::cout << "Constant register info:  " << GetRegisterName(RegisterType::IntUniform) << info.regid.Value()
                           << " = (" << (int)info.i.x << ", " << (int)info.i.y
                           << ", " << (int)info.i.z << ", " << (int)info.i.w << ")"
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
                           << std::endl;
                 break;
 
-            case ConstantInfo::Bool:
+            case ConstantInfo::Type::Bool:
                 std::cout << "Constant register info:  " << GetRegisterName(RegisterType::BoolUniform) << info.regid.Value()
                           << " = " << std::boolalpha << (bool)info.b
                           << "  (raw: 0x" << std::hex << std::setfill('0') << std::setw(8) << info.full_first_word
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
             default:
             {
                 std::stringstream str("Unknown constant type: ");
-                str << std::hex << info.type.Value();
+                str << std::hex << static_cast<uint32_t>(info.type.Value());
                 throw str.str();
             }
             }
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
                                                               [](const UniformInfo& i1, UniformInfo& i2) { return i1.name.length() < i2.name.length(); }
                                                              )->name.length();
             for (auto& uniform_info : parser.shader_info.uniform_table) {
-                bool is_range = (uniform_info.basic.reg_start != uniform_info.basic.reg_end);
+                bool is_range = (uniform_info.basic.regs.reg_start != uniform_info.basic.regs.reg_end);
 
                 std::cout << "Found uniform symbol \"" << std::setw(max_uniform_name_length) << uniform_info.name
                           << "\" for register" << (is_range ? "s " : "  ") << std::dec

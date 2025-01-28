@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(declaration) {
     {
     // Output alias
     auto declaration = parse<StatementDeclaration>(".alias my_alias o5.xyz as texcoord0", declaration_parser, skipper);
-    CheckDeclaration(declaration, { "my_alias", "o5", {}, MakeInputSwizzlerMask<'x', 'y', 'z'>(), { {}, OutputRegisterInfo::TEXCOORD0 } });
+    CheckDeclaration(declaration, { "my_alias", "o5", {}, MakeInputSwizzlerMask<'x', 'y', 'z'>(), { {}, OutputRegisterInfo::Type::TEXCOORD0 } });
     }
 
     {

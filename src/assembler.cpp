@@ -1250,7 +1250,7 @@ int main(int argc, char* argv[])
                 switch (ret.GetType()) {
                     case RegisterType::FloatUniform:
                     {
-                        constant.type = ConstantInfo::Float;
+                        constant.type = ConstantInfo::Type::Float;
                         constant.f.x = to_float24(values[0]);
                         constant.f.y = to_float24(values[1]);
                         constant.f.z = to_float24(values[2]);
@@ -1260,7 +1260,7 @@ int main(int argc, char* argv[])
 
                     case RegisterType::IntUniform:
                     {
-                        constant.type = ConstantInfo::Int;
+                        constant.type = ConstantInfo::Type::Int;
                         constant.i.x = (uint8_t)values[0];
                         constant.i.y = (uint8_t)values[1];
                         constant.i.z = (uint8_t)values[2];
@@ -1270,7 +1270,7 @@ int main(int argc, char* argv[])
 
                     case RegisterType::BoolUniform:
                     {
-                        constant.type = ConstantInfo::Bool;
+                        constant.type = ConstantInfo::Type::Bool;
                         constant.b = (uint32_t)values[0] != 0;
                         break;
                     }
@@ -1325,8 +1325,8 @@ int main(int argc, char* argv[])
 
                 UniformInfo uniform;
                 uniform.basic.symbol_offset = [&]() { size_t ret = 0; for (auto& s : symbol_table) { ret +=s.length()+1; } return ret;}();
-                uniform.basic.reg_start = ToCustomSpace(LookupIdentifier(id));
-                uniform.basic.reg_end = ToCustomSpace(LookupIdentifier(end_id));
+                uniform.basic.regs.reg_start = ToCustomSpace(LookupIdentifier(id));
+                uniform.basic.regs.reg_end = ToCustomSpace(LookupIdentifier(end_id));
                 uniform_table.push_back(uniform);
 
                 symbol_table.push_back(idname);

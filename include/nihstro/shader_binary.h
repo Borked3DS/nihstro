@@ -1,4 +1,5 @@
 // Copyright 2014 Tony Wasserka
+// Copyright 2025 Borked3DS Emulator Project
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,6 +29,8 @@
 #pragma once
 
 #include <cstdint>
+#include <iostream>
+#include <type_traits>
 
 #include "shader_bytecode.h"
 
@@ -271,6 +274,11 @@ struct UniformInfo {
         basic.Initialize();
     }
 };
+
+inline std::ostream& operator<<(std::ostream& os, const OutputRegisterInfo::Type& type) {
+    os << static_cast<std::underlying_type<OutputRegisterInfo::Type>::type>(type);
+    return os;
+}
 
 #pragma pack()
 
